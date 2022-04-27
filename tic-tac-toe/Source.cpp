@@ -3,17 +3,13 @@
 #include <string>
 #include <windows.h>
 #include <conio.h>
+#include <string>
 
 using namespace std;
 
-void getArr(char **arr, int rows, int kols)
-{
-	for (int i = 0; i < rows; i++)
-	{
-		for (int j = 0; j < kols; j++)
-				arr[i][j] = '_';			
-	}
-}
+int rows;
+int kols;
+char** field = nullptr;
 
 void printArr(char** arr, int rows, int kols)
 {
@@ -33,14 +29,106 @@ void DelArr(char** arr, int rows, int kols)
 	delete[] arr;
 }
 
-void getxy(int& x, int& y)
+void saveGame(char**arr,int rows,int kols)
 {
-	cout << "Введите координату x: ";
-	cin >> x;
-	x -= 1;
-	cout << "Введите координату y: ";
-	cin >> y;
-	y -= 1;
+	system("cls");
+	cout << "Введите название сохранения: ";
+	string path;
+	getline(cin, path);
+	path += ".save";
+	ofstream fout(path);
+	fout << "#Время\n#Коммент\n";
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < kols; j++)
+		{
+			fout << field[i][j];
+		}
+		fout << endl;
+	}
+	fout.close();
+	system("cls");
+	printArr(arr, rows, kols);
+}
+
+void loadArr(char **&arr,string &path)
+{
+	ifstream fout;
+	fout.open(path);
+	int counterStr=0;
+	string str;
+	while (!fout.eof())
+	{
+		getline(fout, str);
+		if(str[0]!='#')
+		counterStr++;
+	}
+	counterStr--;
+	arr = new char*[counterStr];
+	for (int i = 0; i < counterStr; i++)
+	{
+		arr[i] = new char[counterStr];
+	}
+	counterStr = 0;
+	fout.close();
+	fout.open(path);
+	while (!fout.eof())
+	{
+		getline(fout, str);
+		if (str[0] == '#')
+			continue;
+		else
+		{
+			for (int i = 0; i < str.size(); i++)
+				arr[counterStr][i] = str[i];
+			counterStr++;
+		}	
+	}
+	rows = counterStr-1;
+	kols = rows;
+	fout.close();
+}
+
+int _getX()
+{
+	do {
+		try {
+
+			string x;
+			cout << "Введите координату x: ";
+			getline(cin, x);
+			if (x == "Save" || x == "save")
+				saveGame(field,rows,kols);
+			int num = stoi(x);
+			return num-1;
+		}
+		catch(const exception &ex)
+		{
+			if (ex.what() == "invalid stoi argument")
+				cout << "Ошибка " << ex.what() << endl;
+		}
+	} while (1);
+}
+
+int _getY()
+{
+	do {
+		try {
+
+			string y;
+			cout << "Введите координату y: ";
+			getline(cin, y);
+			if (y == "Save" || y == "save")
+				saveGame(field,rows,kols);
+			int num = stoi(y);
+			return num-1;
+		}
+		catch (const exception& ex)
+		{
+			if (ex.what() == "invalid stoi argument")
+				cout << "Ошибка " << endl;
+		}
+	} while (1);
 }
 
 int CounterRows(char** arr, int rows,int kols,int x,int y)
@@ -207,33 +295,96 @@ int GameOver(int win1, int win2, int diag, int draw)
 									
 }
 
+string StartGame()
+{
+	cout << "Если у вас активное сохранение, введите его название. Если сохранений нет, введите 0 "<<endl;
+	cout << "Ввод: ";
+	string str;
+	getline(cin, str);
+	return str;
+}
+
+void getArr(char** arr, int& rows, int& kols, string str = "0")
+{
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < kols; j++)
+			arr[i][j] = '_';
+	}
+}
+
+void newArr(char**&arr, int &rows, int &kols)
+{
+	do {
+		cout << "Введите размер поля: ";
+		cin >> rows;
+		kols = rows;
+	} while (rows < 1);
+	arr = new char *[rows];
+	for (int i = 0; i < rows; i++)
+	{
+		arr[i] = new char[kols];
+	}
+	getArr(arr, rows, kols);
+}
+
+void loadGame()
+{
+	system("cls");
+	cout << "Введите название сохранения: ";
+	string path;
+	getline(cin, path);
+	path += ".save";
+	ifstream fout(path);
+	if (!fout.is_open())
+	{
+		cout << "Ошибка названия сохранения! Начало новой игры!"<<endl;
+		newArr(field,rows,kols);
+	}
+	else
+		if (fout.is_open())
+		{
+			loadArr(field, path);
+		}
+	fout.close();
+}
+
 int main() 
 {
 	setlocale(LC_ALL, "Ru");
-	int rows;
-	int kols;
-	cout << "Введите размер поля: ";
-	cin >> rows;
-	kols = rows;
-	char** field = new char* [rows];
-	for (int i = 0; i < rows; i++)
+	char YesNo;
+	cout << "Для продолжения игры нажмите 'y', для начала новой игры нажмите 'n'"<<endl;
+	switch (YesNo=_getch())
 	{
-		field[i] = new char[kols];
+	case 89:
+	case 121:
+	{
+		cout << "Введите название сохраненной игры: ";
+		loadGame();
+	}break;
+	case 78:
+	case 110:
+	{
+		cout << "Начало новой игры: " << endl;
+		newArr(field, rows, kols);
+	}break;
+	default:break;
 	}
-	getArr(field, rows, kols);
+	
 	int x, y;
 	int count = 0;
-	
 	while (1)
 	{
 		int Play = -1;
 		system("cls");
+		cout << "Save - сохранить игру."<<endl;
 		printArr(field, rows, kols);
 		if (count % 2 == 0)
 		{
 			cout << "Ходит игрок №1"<<endl;
 			cout << "Введите клетку (x,y)";
-			getxy(x, y);
+			x = _getX();
+			y = _getY();
 			if (x > rows || y > kols||field[x][y]!='_')
 				continue;
 			field[x][y] = 'x';
@@ -243,7 +394,8 @@ int main()
 		{
 			cout << "Ходит игрок №2" << endl;
 			cout << "Введите клетку (x,y)";
-			getxy(x, y);
+			x = _getX();
+			y = _getY();
 			if (x > rows || y > kols || field[x][y] != '_')
 				continue;
 			field[x][y] = 'o';
