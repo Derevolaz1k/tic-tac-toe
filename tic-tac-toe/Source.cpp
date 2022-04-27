@@ -6,11 +6,6 @@
 
 using namespace std;
 
-int rows;//ƒлина массива
-int kols;
-
-
-
 void getArr(char **arr, int rows, int kols)
 {
 	for (int i = 0; i < rows; i++)
@@ -215,6 +210,8 @@ int GameOver(int win1, int win2, int diag, int draw)
 int main() 
 {
 	setlocale(LC_ALL, "Ru");
+	int rows;
+	int kols;
 	cout << "¬ведите размер пол€: ";
 	cin >> rows;
 	kols = rows;
@@ -247,7 +244,7 @@ int main()
 			cout << "’одит игрок є2" << endl;
 			cout << "¬ведите клетку (x,y)";
 			getxy(x, y);
-			if (x > rows || y > kols)
+			if (x > rows || y > kols || field[x][y] != '_')
 				continue;
 			field[x][y] = 'o';
 		}
