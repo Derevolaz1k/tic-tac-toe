@@ -20,7 +20,6 @@ void getArr(char **arr, int rows, int kols)
 	}
 }
 
-
 void printArr(char** arr, int rows, int kols)
 {
 	for (int i = 0; i < rows; i++)
@@ -99,16 +98,14 @@ int CounterDiag(char** arr, int rows, int kols, int x, int y)
 	{
 		for (int j = 0; j < kols; j++)
 		{
-			if (i + j == rows - 1)
+			if (((i + j) == (rows - 1))&& arr[i][j] == 'x')
 			{
-				arr[i][j] == 'x';
 				counterX++;
 			}
 				
 			else
-				if (i + j == rows - 1)
+				if (((i + j) == (rows - 1))&& arr[i][j] == 'o')
 				{
-					arr[i][j] == 'o';
 					counterO++;
 				}
 		}
@@ -117,8 +114,6 @@ int CounterDiag(char** arr, int rows, int kols, int x, int y)
 		else 
 			if(counterO==kols)
 			return 2;
-			else
-				return 3;
 	}
 	counterX = 0;
 	counterO = 0;
@@ -126,27 +121,29 @@ int CounterDiag(char** arr, int rows, int kols, int x, int y)
 	{
 		for (int j = 0; j < kols; j++)
 		{
-			if (i==j)
+			if (i==j&&arr[i][j]=='x')
 			{
-				arr[i][j] == 'x';
 				counterX++;
 			}
 
 			else
-				if (i==j)
+				if (i==j&&arr[i][j] == 'o')
 				{
-					arr[i][j] == 'o';
 					counterO++;
 				}
 		}
 		if (counterX == kols)
+		{
 			return 1;
+		}
+			
 		else
 			if (counterO == kols)
+			{
 				return 2;
-			else
-				return 3;
+			}	
 	}
+	return 3;
 }
 
 int CounterDraw(char** arr, int rows, int kols, int x, int y)
@@ -204,12 +201,15 @@ int GameOver(int win1, int win2, int diag, int draw)
 							else
 								if (draw == 3)
 								{
-									cout << "Ничья!";
 									return 3;
 								}
 							else
-								if (draw == 0)
-									return 0;
+									if (draw == 0)
+									{
+										cout << "Ничья!";
+										return 0;
+									}
+									
 }
 
 int main() 
@@ -257,5 +257,6 @@ int main()
 			break;
 	}
 	DelArr(field, rows, kols);
+	system("pause");
 	return 0;
 }
