@@ -52,7 +52,7 @@ void saveGame(char**& arr, int rows, int kols, int count)
 
 int lastStr(string& path)
 {
-	ifstream fout(path);
+	ifstream fout("Saves/" + path);
 	string str;
 	while (!fout.eof())
 		getline(fout, str);
@@ -63,7 +63,7 @@ int lastStr(string& path)
 void loadArr(char**& arr, int& rows, int& kols, string& path)
 {
 	ifstream fout;
-	fout.open(path);
+	fout.open("Saves/" + path);
 	int counterStr = 0;
 	string str;
 	while (!fout.eof())
@@ -341,7 +341,7 @@ void newArr(char**& arr, int& rows, int& kols)
 	getArr(arr, rows, kols);
 }
 
-void loadGame(char**& arr, int rows, int kols, int& count)
+void loadGame(char**& arr, int &rows, int &kols, int& count)
 {
 	std::system("cls");
 	cout << "Введите название сохранения: ";

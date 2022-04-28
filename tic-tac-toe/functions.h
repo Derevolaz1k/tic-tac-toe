@@ -15,5 +15,5 @@ int CounterDraw(char** arr, int rows, int kols, int x, int y);
 int GameOver(int win1, int win2, int diag, int draw);
 void getArr(char** arr, int& rows, int& kols);
 void newArr(char**& arr, int& rows, int& kols);
-void loadGame(char**& arr, int rows, int kols, int& count);
+void loadGame(char**& arr, int &rows, int &kols, int& count);
 void newGame_or_loadGame(char**& arr, int& rows, int& kols, int& count);
