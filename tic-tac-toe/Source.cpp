@@ -96,7 +96,7 @@ void loadArr(char **&arr,string &path)
 			counterStr++;
 		}	
 	}
-	rows = counterStr-1;
+	rows = counterStr;
 	kols = rows;
 	fout.close();
 }
