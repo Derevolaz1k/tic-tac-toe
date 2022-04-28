@@ -7,13 +7,24 @@
 
 using namespace std;
 
-void printArr(char** arr, int rows, int kols)
+void printArr(char** arr, int rows, int kols,int count)
 {
+	cout << "Save - сохранить игру." << endl;
 	for (int i = 0; i < rows; i++)
 	{
 		for (int j = 0; j < kols; j++)
 			cout << arr[i][j] << "|";
 		cout << endl;
+	}
+	if (count % 2 == 0)
+	{
+		cout << "Ходит игрок №1" << endl;
+		cout << "Введите клетку (x,y)";
+	}
+	else
+	{
+		cout << "Ходит игрок №2" << endl;
+		cout << "Введите клетку (x,y)";
 	}
 
 }
@@ -47,7 +58,7 @@ void saveGame(char**& arr, int rows, int kols, int count)
 	fout << count;
 	fout.close();
 	std::system("cls");
-	printArr(arr, rows, kols);
+	printArr(arr, rows, kols,count);
 }
 
 int lastStr(string& path)

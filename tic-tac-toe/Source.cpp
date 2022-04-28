@@ -21,12 +21,9 @@ int main()
 	{
 		int Play = -1;
 		std::system("cls");
-		cout << "Save - сохранить игру."<<endl;
-		printArr(field, rows, kols);
+		printArr(field, rows, kols,count);
 		if (count % 2 == 0)
 		{
-			cout << "Ходит игрок №1"<<endl;
-			cout << "Введите клетку (x,y)";
 			x = _getX(field,rows,kols,count);
 			y = _getY(field, rows, kols, count);
 			if (x > rows || y > kols||field[x][y]!='_')
@@ -36,8 +33,6 @@ int main()
 			
 		else
 		{
-			cout << "Ходит игрок №2" << endl;
-			cout << "Введите клетку (x,y)";
 			x = _getX(field, rows, kols, count);
 			y = _getY(field, rows, kols, count);
 			if (x > rows || y > kols || field[x][y] != '_')

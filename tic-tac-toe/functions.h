@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-void printArr(char** arr, int rows, int kols);
+void printArr(char** arr, int rows, int kols,int count);
 void DelArr(char** arr, int rows, int kols);
 void saveGame(char**& arr, int rows, int kols, int count);
 int lastStr(std::string& path);
