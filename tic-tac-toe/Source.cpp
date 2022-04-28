@@ -29,15 +29,17 @@ void DelArr(char** arr, int rows, int kols)
 	delete[] arr;
 }
 
-void saveGame(char**arr,int rows,int kols)
+void saveGame(char**arr,int rows,int kols,int count)
 {
-	system("cls");
+	SYSTEMTIME date;
+	GetSystemTime(&date);
+	std::system("cls");
 	cout << "Введите название сохранения: ";
 	string path;
 	getline(cin, path);
 	path += ".save";
 	ofstream fout(path);
-	fout << "#Время\n#Коммент\n";
+	fout << "#Время "<< (date.wDay) << "." << (date.wMonth) << "." << date.wYear << " " << (date.wHour + 5) << ":" << date.wMinute << endl<<"#Коммент\n";
 	for (int i = 0; i < rows; i++)
 	{
 		for (int j = 0; j < kols; j++)
@@ -46,9 +48,19 @@ void saveGame(char**arr,int rows,int kols)
 		}
 		fout << endl;
 	}
+	fout << count;
 	fout.close();
-	system("cls");
+	std::system("cls");
 	printArr(arr, rows, kols);
+}
+int lastStr(string &path)
+{
+	ifstream fout(path);
+	string str;
+	while (!fout.eof())
+		getline(fout, str);
+	fout.close();
+	return stoi(str);
 }
 
 void loadArr(char **&arr,string &path)
@@ -75,7 +87,7 @@ void loadArr(char **&arr,string &path)
 	while (!fout.eof())
 	{
 		getline(fout, str);
-		if (str[0] == '#')
+		if (str[0] == '#'||((int)str[0]>=48&&(int)str[0]<=57))
 			continue;
 		else
 		{
@@ -89,7 +101,7 @@ void loadArr(char **&arr,string &path)
 	fout.close();
 }
 
-int _getX()
+int _getX(int count)
 {
 	do {
 		try {
@@ -98,7 +110,7 @@ int _getX()
 			cout << "Введите координату x: ";
 			getline(cin, x);
 			if (x == "Save" || x == "save")
-				saveGame(field,rows,kols);
+				saveGame(field,rows,kols,count);
 			int num = stoi(x);
 			return num-1;
 		}
@@ -110,7 +122,7 @@ int _getX()
 	} while (1);
 }
 
-int _getY()
+int _getY(int count)
 {
 	do {
 		try {
@@ -119,7 +131,7 @@ int _getY()
 			cout << "Введите координату y: ";
 			getline(cin, y);
 			if (y == "Save" || y == "save")
-				saveGame(field,rows,kols);
+				saveGame(field,rows,kols,count);
 			int num = stoi(y);
 			return num-1;
 		}
@@ -315,11 +327,24 @@ void getArr(char** arr, int& rows, int& kols, string str = "0")
 
 void newArr(char**&arr, int &rows, int &kols)
 {
-	do {
-		cout << "Введите размер поля: ";
-		cin >> rows;
-		kols = rows;
-	} while (rows < 1);
+	do 
+	{
+		try 
+		{
+
+			string y;
+			cout << "Введите размер поля: ";
+			getline(cin, y);
+			rows = stoi(y);
+			kols = rows;
+			break;
+		}
+		catch (const exception& ex)
+		{
+			if (ex.what() == "invalid stoi argument")
+				cout << "Ошибка " << endl;
+		}
+	} while (1);
 	arr = new char *[rows];
 	for (int i = 0; i < rows; i++)
 	{
@@ -328,9 +353,9 @@ void newArr(char**&arr, int &rows, int &kols)
 	getArr(arr, rows, kols);
 }
 
-void loadGame()
+void loadGame(int &count)
 {
-	system("cls");
+	std::system("cls");
 	cout << "Введите название сохранения: ";
 	string path;
 	getline(cin, path);
@@ -340,51 +365,56 @@ void loadGame()
 	{
 		cout << "Ошибка названия сохранения! Начало новой игры!"<<endl;
 		newArr(field,rows,kols);
+		count = 0;
 	}
 	else
 		if (fout.is_open())
 		{
 			loadArr(field, path);
+			count = lastStr(path);
 		}
 	fout.close();
+}
+
+void newGame_or_loadGame(int& count)
+{
+	char YesNo;
+	cout << "Для продолжения игры нажмите 'y', любую клавишу для начала новой игры..." << endl;
+
+	switch (YesNo = _getch())
+	{
+		case 89:
+		case 121:
+			{
+				cout << "Введите название сохраненной игры: ";
+				loadGame(count);
+			}break;
+		default: 
+			{
+				cout << "Начало новой игры: " << endl;
+				newArr(field, rows, kols);
+			}
+	}
 }
 
 int main() 
 {
 	setlocale(LC_ALL, "Ru");
-	char YesNo;
-	cout << "Для продолжения игры нажмите 'y', для начала новой игры нажмите 'n'"<<endl;
-	switch (YesNo=_getch())
-	{
-	case 89:
-	case 121:
-	{
-		cout << "Введите название сохраненной игры: ";
-		loadGame();
-	}break;
-	case 78:
-	case 110:
-	{
-		cout << "Начало новой игры: " << endl;
-		newArr(field, rows, kols);
-	}break;
-	default:break;
-	}
-	
-	int x, y;
 	int count = 0;
+	newGame_or_loadGame(count);
+	int x, y;
 	while (1)
 	{
 		int Play = -1;
-		system("cls");
+		std::system("cls");
 		cout << "Save - сохранить игру."<<endl;
 		printArr(field, rows, kols);
 		if (count % 2 == 0)
 		{
 			cout << "Ходит игрок №1"<<endl;
 			cout << "Введите клетку (x,y)";
-			x = _getX();
-			y = _getY();
+			x = _getX(count);
+			y = _getY(count);
 			if (x > rows || y > kols||field[x][y]!='_')
 				continue;
 			field[x][y] = 'x';
@@ -394,8 +424,8 @@ int main()
 		{
 			cout << "Ходит игрок №2" << endl;
 			cout << "Введите клетку (x,y)";
-			x = _getX();
-			y = _getY();
+			x = _getX(count);
+			y = _getY(count);
 			if (x > rows || y > kols || field[x][y] != '_')
 				continue;
 			field[x][y] = 'o';
@@ -406,6 +436,6 @@ int main()
 			break;
 	}
 	DelArr(field, rows, kols);
-	system("pause");
+	std::system("pause");
 	return 0;
 }
